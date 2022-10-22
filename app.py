@@ -4,19 +4,30 @@ import requests
 from bs4 import BeautifulSoup as bs
 from urllib.request import urlopen as uReq
 
-app = Flask(__name__)
+app = Flask(__name__) # object of a flask as studied before.
 
 @app.route('/',methods=['GET'])  # route to display the home page
-@cross_origin()
+@cross_origin() # @cross_origin() not needed as of now, needed when we deploy on cloud platform,
+                # it is for purpose such that we can make our url available at different locations also.
 def homePage():
     return render_template("index.html")
+
+
+# This function called with path/review, in the html code page, this is written there that when that specific
+# button on frontend named submit is clicked, call this index() function below.
+# Whenever we click on submit button on frontend.
 
 @app.route('/review',methods=['POST','GET']) # route to show the review comments in a web UI
 @cross_origin()
 def index():
     if request.method == 'POST':
-        try:
+        try: # actual logic of this project goes from line no. 19 to line no. 75,76..79
+
+            # content just see index.html file, content is just input passed by clicking button
+            # taken input as .form, .replace(" ","") so that by mistake if input contains space in end,
+            # so remove space.
             searchString = request.form['content'].replace(" ","")
+            # e.g of searchString is iphone, samsung, lg, bosch etc.
             flipkart_url = "https://www.flipkart.com/search?q=" + searchString
             uClient = uReq(flipkart_url)
             flipkartPage = uClient.read()
@@ -69,7 +80,8 @@ def index():
                 mydict = {"Product": searchString, "Name": name, "Rating": rating, "CommentHead": commentHead,
                           "Comment": custComment}
                 reviews.append(mydict)
-            return render_template('results.html', reviews=reviews[0:(len(reviews)-1)])
+                # output printed in results.html
+            return render_template('results.html', reviews=reviews[0:(len(reviews)-1)]) # indexing 0 to n-1, reviews is a list.
         except Exception as e:
             print('The Exception message is: ',e)
             return 'something is wrong'
@@ -79,5 +91,5 @@ def index():
         return render_template('index.html')
 
 if __name__ == "__main__":
-    #app.run(host='127.0.0.1', port=8001, debug=True)
-	app.run(debug=True)
+    app.run(host='127.0.0.1', port=8001, debug=True) # any of these 2 lines, comment any 1.
+	#app.run(debug=True)
