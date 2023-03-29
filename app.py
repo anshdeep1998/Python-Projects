@@ -43,21 +43,27 @@ def index():
             print(prod_html)
             commentboxes = prod_html.find_all('div', {'class': "_16PBlm"})
 
-            filename = searchString + ".csv"
-            fw = open(filename, "w")
+            # Here we are making a csv file with name as search term in the frontend and all it's reviews
+            # are stored in the respective csv file for each company anf product.
+            filename = searchString + ".csv" # name of file +.csv
+            fw = open(filename, "w") # file opened in write mode, already known the concept behind it.
+
+            # headers is the columns in that excel file.
             headers = "Product, Customer Name, Rating, Heading, Comment \n"
             fw.write(headers)
             reviews = []
             for commentbox in commentboxes:
                 try:
-                    #name.encode(encoding='utf-8')
+                    # name.encode(encoding='utf-8')
+                    # name extraction explained well in jupyter file.
                     name = commentbox.div.div.find_all('p', {'class': '_2sc7ZR _2V5EHH'})[0].text
 
                 except:
                     name = 'No Name'
 
                 try:
-                    #rating.encode(encoding='utf-8')
+                    # rating.encode(encoding='utf-8')
+                    # explained well in jupyter file
                     rating = commentbox.div.div.div.div.text
 
 
@@ -79,6 +85,10 @@ def index():
 
                 mydict = {"Product": searchString, "Name": name, "Rating": rating, "CommentHead": commentHead,
                           "Comment": custComment}
+
+                # reviews was the empty list which is now appended with dictionaries like made above,
+                # but for all comment boxes
+
                 reviews.append(mydict)
                 # output printed in results.html
             return render_template('results.html', reviews=reviews[0:(len(reviews)-1)]) # indexing 0 to n-1, reviews is a list.
